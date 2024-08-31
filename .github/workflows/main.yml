@@ -9,7 +9,12 @@ jobs:
   
   build:
     runs-on: ubuntu-latest
-
+    strategy:
+      matrix:
+        include:
+          - { icon: '🟦', guest: x86_64-softmmu }
+          - { icon: '🟦', guest: aarch64-softmmu }
+    name: 🚧${{ matrix.icon }} ${{ matrix.guest }} Build
     steps:
     - name: Checkout repository
       uses: actions/checkout@v3
@@ -111,7 +116,7 @@ jobs:
         export NDK_ROOT=${{ steps.setup-ndk.outputs.ndk-path }}
         export NDK_HOME=${{ steps.setup-ndk.outputs.ndk-path }}
         export PATH=$NDK_HOME/toolchains/llvm/prebuilt/linux-x86_64/bin:$PATH
-        export BUILD_GUEST=x86_64-softmmu
+        export BUILD_GUEST=${{ matrix.guest }}
         export BUILD_HOST=armeabi-v7a
         make limbo
         make distclean
