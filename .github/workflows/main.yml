@@ -12,8 +12,8 @@ jobs:
     strategy:
       matrix:
         include:
-          - { icon: '🟦', guest: x86_64-softmmu }
-          - { icon: '🟦', guest: aarch64-softmmu }
+          - { icon: '🟦', guest: x86_64-softmmu, arch: x86 }
+          - { icon: '🟦', guest: aarch64-softmmu, arch: arm }
     name: 🚧${{ matrix.icon }} ${{ matrix.guest }} Build
     steps:
     - name: Checkout repository
@@ -134,7 +134,7 @@ jobs:
       run: |
         ./gradlew assembleRelease
         mkdir -p app/build/outputs/apk/release/
-        cp limbo-android-x86/build/outputs/apk/release/limbo-android-x86-release-unsigned.apk app/build/outputs/apk/release/limbo-android-x86-release.apk
+        cp limbo-android-${{ matrix.arch }}/build/outputs/apk/release/limbo-android-${{ matrix.arch }}-release-unsigned.apk app/build/outputs/apk/release/limbo-android-${{ matrix.arch }}-release.apk
         
     - uses: r0adkll/sign-android-release@v1
       name: Sign app APK
@@ -152,8 +152,8 @@ jobs:
     - name: Upload APK
       uses: actions/upload-artifact@v2
       with:
-        name: limbo-android-x86-release.apk
-        path: app/build/outputs/apk/release/limbo-android-x86-release.apk
+        name: limbo-android-${{ matrix.arch }}-release.apk
+        path: app/build/outputs/apk/release/limbo-android-${{ matrix.arch }}-release.apk
         
     - name: Clean up
       run: |
